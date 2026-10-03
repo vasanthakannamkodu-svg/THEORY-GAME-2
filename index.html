@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Psychology Theory Challenge</title>
+<style>
+:root{
+  --bg:#f4f1ff; --card:#ffffff; --ink:#1f2340; --muted:#6b6f8d;
+  --primary:#5b4bdb; --primary-d:#4435b8; --ok:#1f9d61; --ok-bg:#e3f7ec;
+  --bad:#d6414f; --bad-bg:#fde8ea; --line:#d9d5f3; --gold:#f5a623;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#14152b; --card:#1e2040; --ink:#eef0ff; --muted:#a0a5cc;
+    --primary:#8c7dff; --primary-d:#a89cff; --ok:#4cd697; --ok-bg:#16382a;
+    --bad:#ff7380; --bad-bg:#42202a; --line:#34376a;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#14152b; --card:#1e2040; --ink:#eef0ff; --muted:#a0a5cc;
+  --primary:#8c7dff; --primary-d:#a89cff; --ok:#4cd697; --ok-bg:#16382a;
+  --bad:#ff7380; --bad-bg:#42202a; --line:#34376a;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);
+  font-family:"Times New Roman",Times,serif}
+button,input{font-family:"Times New Roman",Times,serif}
+.banner{display:flex;align-items:center;gap:8px;margin:0 0 14px;padding:10px;
+  background:var(--card);border:2px solid var(--primary);border-radius:16px}
+.banner .bt{flex:1;min-width:0}
+.banner h1{margin:0;text-align:center}
+.banner .sub{margin:2px 0 0}
+.snd{flex:0 0 38px;width:38px;height:38px;border-radius:50%;
+  border:2px solid var(--primary);background:var(--bg);color:var(--ink);font-size:18px;
+  cursor:pointer;display:grid;place-items:center;padding:0}
+.photo{flex:0 0 clamp(48px,14vw,72px);width:clamp(48px,14vw,72px);height:clamp(48px,14vw,72px);
+  border-radius:50%;object-fit:cover;border:3px solid var(--primary);background:var(--bg)}
+body{min-height:100vh;padding:12px 10px 24px}
+.wrap{max-width:760px;margin:0 auto}
+h1{font-size:clamp(20px,5.5vw,30px);margin:6px 0 2px;text-align:center}
+.sub{text-align:center;color:var(--muted);font-size:clamp(12px,3.2vw,14px);margin:0 0 14px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px}
+.hidden{display:none!important}
+
+/* Home */
+.levels{display:grid;gap:10px;margin:12px 0}
+.lvl{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;
+  border:2px solid var(--line);background:var(--card);cursor:pointer;text-align:left;
+  color:var(--ink);font:inherit;width:100%}
+.lvl:disabled{opacity:.55;cursor:not-allowed}
+.lvl .n{flex:0 0 40px;height:40px;border-radius:50%;background:var(--primary);color:#fff;
+  display:grid;place-items:center;font-weight:700}
+.lvl:disabled .n{background:var(--muted)}
+.lvl b{display:block;font-size:clamp(14px,4vw,16px)}
+.lvl small{color:var(--muted);font-size:clamp(11px,3vw,13px)}
+.lvl .st{margin-left:auto;font-size:13px;font-weight:700;white-space:nowrap}
+.info{display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:clamp(11px,3vw,13px);color:var(--muted);margin-top:8px}
+.info div{background:var(--bg);border-radius:10px;padding:8px}
+
+.btn{background:var(--primary);color:#fff;border:0;border-radius:12px;padding:12px 18px;
+  font:inherit;font-weight:700;cursor:pointer;width:100%;font-size:clamp(14px,4vw,16px)}
+.btn:active{background:var(--primary-d)}
+.btn.ghost{background:transparent;color:var(--primary);border:2px solid var(--primary)}
+.row{display:flex;gap:8px;margin-top:10px}
+
+/* HUD */
+.hud{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:8px;
+  font-size:clamp(12px,3.4vw,15px);font-weight:700}
+.pill{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:6px 12px}
+.bar{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin-bottom:10px}
+.bar i{display:block;height:100%;width:0;background:var(--primary);transition:width .3s}
+.tip{text-align:center;color:var(--muted);font-size:clamp(11px,3vw,13px);margin:0 0 8px}
+
+/* Board: LEFT questions / RIGHT answers, always two columns */
+.board{display:grid;grid-template-columns:1fr 1fr;gap:8px 10px;align-items:start}
+.colh{font-size:clamp(10px,2.8vw,12px);text-transform:uppercase;letter-spacing:.06em;
+  color:var(--muted);font-weight:700;text-align:center;margin-bottom:2px}
+.col{display:flex;flex-direction:column;gap:8px}
+.slot{background:var(--card);border:2px dashed var(--line);border-radius:12px;padding:8px;
+  min-height:92px;display:flex;flex-direction:column;gap:6px;transition:.15s}
+.slot .q{font-size:clamp(11.5px,3.3vw,15px);line-height:1.3;font-weight:600}
+.slot .ans{border-radius:8px;min-height:26px;font-size:clamp(11px,3.1vw,14px);font-weight:700;
+  display:flex;align-items:center;justify-content:center;text-align:center;padding:4px;
+  background:var(--bg);color:var(--muted);border:1px dashed var(--line)}
+.slot.over{border-color:var(--primary);background:var(--bg)}
+.slot.hint{border-color:var(--primary)}
+.slot.ok{border:2px solid var(--ok);background:var(--ok-bg)}
+.slot.ok .ans{background:var(--ok);color:#fff;border:0}
+.slot.bad{border-color:var(--bad);background:var(--bad-bg);animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+.chip{background:var(--primary);color:#fff;border-radius:12px;padding:8px;min-height:92px;
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  font-size:clamp(11.5px,3.3vw,15px);font-weight:700;line-height:1.25;cursor:grab;
+  touch-action:none;user-select:none;-webkit-user-select:none;border:3px solid transparent;
+  box-shadow:0 2px 0 rgba(0,0,0,.18)}
+.chip.sel{border-color:var(--gold);transform:scale(1.03)}
+.chip.used{visibility:hidden}
+.chip.drag-src{opacity:.35}
+.ghost-chip{position:fixed;z-index:999;pointer-events:none;transform:translate(-50%,-50%) scale(1.05);
+  opacity:.92;box-shadow:0 8px 20px rgba(0,0,0,.3)}
+
+.msg{min-height:22px;text-align:center;font-weight:700;margin-top:10px;font-size:clamp(12px,3.4vw,15px)}
+.msg.ok{color:var(--ok)} .msg.bad{color:var(--bad)}
+
+/* Modal */
+.modal{position:fixed;inset:0;background:rgba(10,10,30,.6);display:grid;place-items:center;padding:16px;z-index:1000}
+.modal .card{max-width:420px;width:100%;text-align:center}
+.big{font-size:clamp(32px,10vw,48px);font-weight:800;color:var(--primary);margin:4px 0}
+.stars{font-size:28px;letter-spacing:4px}
+.recap{text-align:left;font-size:clamp(12px,3.3vw,14px);background:var(--bg);border-radius:10px;padding:8px 10px;margin:10px 0}
+.recap div{padding:3px 0;border-bottom:1px solid var(--line)} .recap div:last-child{border:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="banner">
+    <button class="snd" id="sndBtn" aria-label="Toggle music and sound">🔊</button>
+    <div class="bt">
+      <h1>🧠 Psychology Theory Challenge</h1>
+      <p class="sub">KTET Model Question Game · KTET GURUPLUS</p>
+    </div>
+    <img class="photo" id="myPhoto" src="myphoto.jpeg" alt="My photo" onerror="this.style.visibility='hidden'">
+  </header>
+
+  <!-- HOME -->
+  <section id="home">
+    <div class="card">
+      <div class="levels" id="levelList"></div>
+      <div class="info">
+        <div>📝 5 questions per level<br>(15 in total)</div>
+        <div>⭐ 10 points per correct answer<br>Max score: 150</div>
+        <div>👆 Drag &amp; drop, or tap an answer then tap a question</div>
+        <div>🔓 Finish a level to unlock the next</div>
+      </div>
+      <div class="row">
+        <div class="pill" style="flex:1;text-align:center">Total score: <span id="homeScore">0</span> / 150</div>
+      </div>
+      <div class="row"><button class="btn ghost" id="resetBtn">Reset progress</button></div>
+    </div>
+  </section>
+
+  <!-- GAME -->
+  <section id="game" class="hidden">
+    <div class="hud">
+      <span class="pill" id="lvlName"></span>
+      <span class="pill">Score: <span id="score">0</span></span>
+    </div>
+    <div class="bar"><i id="prog"></i></div>
+    <p class="tip">Drag an answer from the right to its question on the left (or tap both).</p>
+    <div class="board">
+      <div class="colh">Questions</div>
+      <div class="colh">Answers</div>
+      <div class="col" id="qCol"></div>
+      <div class="col" id="aCol"></div>
+    </div>
+    <div class="msg" id="msg"></div>
+    <div class="row"><button class="btn ghost" id="backBtn">← Levels</button></div>
+  </section>
+</div>
+
+<!-- RESULT -->
+<div class="modal hidden" id="modal">
+  <div class="card">
+    <div class="stars" id="stars"></div>
+    <h2 id="mTitle" style="margin:6px 0"></h2>
+    <div class="big"><span id="mPts">0</span> pts</div>
+    <div id="mSub" style="color:var(--muted);font-size:14px"></div>
+    <div class="recap" id="recap"></div>
+    <div class="row">
+      <button class="btn ghost" id="mHome">Levels</button>
+      <button class="btn" id="mNext">Next Level →</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const LEVELS = [
+  { name:"Level 1: Sigmund Freud", short:"Psychoanalytic Theory", items:[
+    {q:"Part of personality that works on the pleasure principle and wants instant satisfaction", a:"Id"},
+    {q:"Part of personality that works on the reality principle and balances desires with the world", a:"Ego"},
+    {q:"Moral conscience part of personality that strives for perfection", a:"Superego"},
+    {q:"Defence mechanism of pushing painful thoughts into the unconscious", a:"Repression"},
+    {q:"Psychosexual stage (3–6 years) in which the Oedipus complex appears", a:"Phallic Stage"}
+  ]},
+  { name:"Level 2: Erik Erikson", short:"Psychosocial Theory", items:[
+    {q:"Infancy (birth – 1 year)", a:"Trust vs Mistrust"},
+    {q:"Early childhood (1 – 3 years)", a:"Autonomy vs Shame & Doubt"},
+    {q:"Preschool age (3 – 6 years)", a:"Initiative vs Guilt"},
+    {q:"School age (6 – 12 years)", a:"Industry vs Inferiority"},
+    {q:"Adolescence (12 – 18 years)", a:"Identity vs Role Confusion"}
+  ]},
+  { name:"Level 3: Lawrence Kohlberg", short:"Moral Development Theory", items:[
+    {q:"Child obeys rules only to avoid punishment (Stage 1)", a:"Punishment & Obedience Orientation"},
+    {q:"“You scratch my back, I’ll scratch yours.” Acts for personal benefit (Stage 2)", a:"Instrumental / Self-interest Orientation"},
+    {q:"“Good boy – nice girl.” Seeks approval of others (Stage 3)", a:"Interpersonal Concordance Orientation"},
+    {q:"Respects law, duty and social order (Stage 4)", a:"Law & Order Orientation"},
+    {q:"Follows universal ethical principles such as justice and human rights (Stage 6)", a:"Universal Ethical Principle Orientation"}
+  ]}
+];
+/* ---------- Music & sound (generated with Web Audio, no files needed) ---------- */
+let ac=null, master=null, soundOn=true, musicTimer=null, nextT=0, mStep=0;
+const CHORDS=[[0,4,7],[9,12,16],[5,9,12],[7,11,14]];
+const ROOTS=[-12,-3,-7,-5];
+const PATTERN=[0,1,2,1,2,1,0,1];
+const hz=n=>261.63*Math.pow(2,n/12);
+
+function initAudio(){
+  if(!ac){
+    const C=window.AudioContext||window.webkitAudioContext; if(!C) return false;
+    ac=new C(); master=ac.createGain(); master.gain.value=0.5; master.connect(ac.destination);
+  }
+  if(ac.state==="suspended") ac.resume();
+  return true;
+}
+function tone(f,t,dur,type,vol){
+  if(!ac) return;
+  const o=ac.createOscillator(), g=ac.createGain();
+  o.type=type; o.frequency.value=f;
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.exponentialRampToValueAtTime(vol,t+0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  o.connect(g); g.connect(master); o.start(t); o.stop(t+dur+0.05);
+}
+function scheduler(){
+  if(!ac||!soundOn) return;
+  while(nextT<ac.currentTime+0.6){
+    const bar=Math.floor(mStep/8)%4, i=mStep%8, ch=CHORDS[bar];
+    const note=ch[PATTERN[i]]+(i===3||i===7?12:0);
+    tone(hz(note),nextT,0.45,"triangle",0.10);
+    if(i===0) tone(hz(ROOTS[bar]),nextT,1.9,"sine",0.16);
+    if(i===4) tone(hz(ROOTS[bar]+7),nextT,0.9,"sine",0.08);
+    nextT+=0.32; mStep++;
+  }
+}
+function startMusic(){
+  if(!initAudio()||musicTimer||!soundOn) return;
+  nextT=ac.currentTime+0.1;
+  musicTimer=setInterval(scheduler,200);
+}
+function stopMusic(){ clearInterval(musicTimer); musicTimer=null; }
+function sfx(kind){
+  if(!soundOn||!initAudio()) return;
+  const t=ac.currentTime;
+  if(kind==="ok"){ tone(660,t,0.18,"sine",0.28); tone(880,t+0.1,0.3,"sine",0.28); }
+  else if(kind==="bad"){ tone(180,t,0.28,"sawtooth",0.14); tone(130,t+0.12,0.3,"sawtooth",0.14); }
+  else if(kind==="pick"){ tone(520,t,0.1,"square",0.08); }
+  else if(kind==="win"){ [523,659,784,1047,1319].forEach((f,k)=>tone(f,t+k*0.14,0.5,"triangle",0.26)); }
+}
+function toggleSound(){
+  soundOn=!soundOn;
+  $("sndBtn").textContent=soundOn?"🔊":"🔇";
+  if(soundOn){ startMusic(); } else { stopMusic(); }
+}
+/* browsers need a tap before audio can start */
+document.addEventListener("pointerdown",function first(){
+  startMusic(); document.removeEventListener("pointerdown",first);
+},{once:true});
+document.addEventListener("visibilitychange",()=>{
+  if(!ac) return;
+  if(document.hidden) ac.suspend(); else if(soundOn) ac.resume();
+});
+
+const PTS = 10;
+const state = { unlocked:1, scores:[null,null,null], cur:0 };
+const $ = id => document.getElementById(id);
+
+/* optional persistence (safe if storage is blocked) */
+function save(){ try{ localStorage.setItem("ptc_state", JSON.stringify(state)); }catch(e){} }
+function load(){ try{ const s=JSON.parse(localStorage.getItem("ptc_state")||"null");
+  if(s&&Array.isArray(s.scores)){ state.unlocked=s.unlocked; state.scores=s.scores; } }catch(e){} }
+
+function total(){ return state.scores.reduce((a,b)=>a+(b||0),0); }
+
+/* ---------- Home ---------- */
+function renderHome(){
+  const list=$("levelList"); list.innerHTML="";
+  LEVELS.forEach((L,i)=>{
+    const locked = i+1>state.unlocked;
+    const b=document.createElement("button");
+    b.className="lvl"; b.disabled=locked;
+    const done = state.scores[i]!==null;
+    b.innerHTML = `<span class="n">${locked?"🔒":i+1}</span>
+      <span><b>${L.name}</b><small>${L.short}</small></span>
+      <span class="st">${locked?"Locked":done?state.scores[i]+"/50 ✓":"Play"}</span>`;
+    b.onclick=()=>startLevel(i);
+    list.appendChild(b);
+  });
+  $("homeScore").textContent = total();
+  $("home").classList.remove("hidden");
+  $("game").classList.add("hidden");
+}
+
+/* ---------- Game ---------- */
+let G=null, selChip=null;
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+
+function startLevel(i){
+  state.cur=i;
+  const L=LEVELS[i];
+  G={ i, solved:0, pts:0, wrong:0, firstTry:L.items.map(()=>true) };
+  selChip=null;
+  $("lvlName").textContent=L.name.split(":")[0]+" · "+L.short;
+  $("score").textContent=0; $("prog").style.width="0%"; setMsg("");
+  const qCol=$("qCol"), aCol=$("aCol"); qCol.innerHTML=""; aCol.innerHTML="";
+  L.items.forEach((it,k)=>{
+    const s=document.createElement("div"); s.className="slot"; s.dataset.k=k;
+    s.innerHTML=`<div class="q">${k+1}. ${it.q}</div><div class="ans">Drop here</div>`;
+    s.addEventListener("click",()=>onSlotTap(s));
+    qCol.appendChild(s);
+  });
+  // answers shuffled; keep the same row height by pairing grid rows
+  shuffle(L.items.map((it,k)=>({k,a:it.a}))).forEach(o=>{
+    const c=document.createElement("div"); c.className="chip"; c.dataset.k=o.k; c.textContent=o.a;
+    attachDrag(c);
+    aCol.appendChild(c);
+  });
+  $("home").classList.add("hidden"); $("game").classList.remove("hidden");
+  window.scrollTo(0,0);
+}
+
+function setMsg(t,c){ const m=$("msg"); m.textContent=t; m.className="msg "+(c||""); }
+
+function onSlotTap(slot){
+  if(!selChip || slot.classList.contains("ok")) return;
+  attempt(selChip, slot);
+}
+
+function attempt(chip, slot){
+  const ck=+chip.dataset.k, sk=+slot.dataset.k;
+  clearSel();
+  if(ck===sk){
+    sfx("ok");
+    slot.classList.remove("bad"); slot.classList.add("ok");
+    slot.querySelector(".ans").textContent=chip.textContent;
+    chip.classList.add("used");
+    if(G.firstTry[sk]){ G.pts+=PTS; }
+    G.solved++;
+    $("score").textContent=G.pts;
+    $("prog").style.width=(G.solved/5*100)+"%";
+    setMsg(G.firstTry[sk]?"✅ Correct! +10 points":"✅ Correct! (no points – earlier wrong try)","ok");
+    if(G.solved===5) setTimeout(finishLevel,700);
+  }else{
+    sfx("bad");
+    G.firstTry[sk]=false; G.firstTry[ck]=false; G.wrong++;
+    slot.classList.remove("bad"); void slot.offsetWidth; slot.classList.add("bad");
+    setTimeout(()=>slot.classList.remove("bad"),600);
+    setMsg("❌ Not a match. Try again!","bad");
+  }
+}
+
+function clearSel(){
+  if(selChip) selChip.classList.remove("sel");
+  selChip=null;
+  document.querySelectorAll(".slot.hint").forEach(s=>s.classList.remove("hint"));
+}
+function selectChip(chip){
+  if(selChip===chip){ clearSel(); return; }
+  clearSel(); sfx("pick"); selChip=chip; chip.classList.add("sel");
+  document.querySelectorAll(".slot:not(.ok)").forEach(s=>s.classList.add("hint"));
+}
+
+/* Drag & drop with pointer events (works for mouse AND touch) */
+function attachDrag(chip){
+  let sx=0, sy=0, ghost=null, moved=false, pid=null;
+  chip.addEventListener("pointerdown",e=>{
+    if(chip.classList.contains("used")) return;
+    pid=e.pointerId; sx=e.clientX; sy=e.clientY; moved=false;
+    chip.setPointerCapture(pid);
+  });
+  chip.addEventListener("pointermove",e=>{
+    if(pid===null || e.pointerId!==pid) return;
+    if(!moved && Math.hypot(e.clientX-sx,e.clientY-sy)>8){
+      moved=true; clearSel();
+      ghost=chip.cloneNode(true); ghost.className="chip ghost-chip";
+      ghost.style.width=chip.offsetWidth+"px"; ghost.style.minHeight="auto";
+      document.body.appendChild(ghost);
+      chip.classList.add("drag-src");
+    }
+    if(moved){
+      ghost.style.left=e.clientX+"px"; ghost.style.top=e.clientY+"px";
+      const el=document.elementFromPoint(e.clientX,e.clientY);
+      document.querySelectorAll(".slot.over").forEach(s=>s.classList.remove("over"));
+      const sl=el&&el.closest(".slot"); if(sl&&!sl.classList.contains("ok")) sl.classList.add("over");
+    }
+  });
+  const end=e=>{
+    if(pid===null || e.pointerId!==pid) return;
+    try{chip.releasePointerCapture(pid);}catch(_){}
+    pid=null;
+    if(moved){
+      const el=document.elementFromPoint(e.clientX,e.clientY);
+      const sl=el&&el.closest(".slot");
+      if(ghost){ghost.remove();ghost=null;}
+      chip.classList.remove("drag-src");
+      document.querySelectorAll(".slot.over").forEach(s=>s.classList.remove("over"));
+      if(sl && !sl.classList.contains("ok") && e.type==="pointerup") attempt(chip, sl);
+    }else if(e.type==="pointerup"){
+      selectChip(chip);
+    }
+  };
+  chip.addEventListener("pointerup",end);
+  chip.addEventListener("pointercancel",end);
+}
+
+/* ---------- Finish ---------- */
+function finishLevel(){
+  const i=G.i, L=LEVELS[i];
+  state.scores[i]=Math.max(state.scores[i]||0, G.pts);
+  if(i+2>state.unlocked && i<2) state.unlocked=i+2;
+  save();
+  const last = i===2;
+  const full = G.pts===50;
+  $("stars").textContent = G.pts>=50?"⭐⭐⭐":G.pts>=30?"⭐⭐☆":"⭐☆☆";
+  $("mTitle").textContent = last ? "🏆 Challenge Complete!" : "Level "+(i+1)+" Complete!";
+  $("mPts").textContent = last ? total() : G.pts;
+  $("mSub").textContent = last
+    ? `Final score out of 150 · Level score: ${G.pts}/50`
+    : `${G.pts} / 50 points · ${G.wrong} wrong attempt${G.wrong===1?"":"s"}${full?" · Perfect!":""}`;
+  $("recap").innerHTML = L.items.map((it,k)=>`<div><b>${k+1}.</b> ${it.q}<br>➜ <b>${it.a}</b></div>`).join("");
+  $("mNext").textContent = last ? "Play again" : "Next Level →";
+  $("mNext").onclick = ()=>{ $("modal").classList.add("hidden"); last ? renderHome() : startLevel(i+1); };
+  $("modal").classList.remove("hidden");
+  sfx("win");
+}
+
+$("sndBtn").onclick=toggleSound;
+$("mHome").onclick=()=>{ $("modal").classList.add("hidden"); renderHome(); };
+$("backBtn").onclick=()=>{ clearSel(); renderHome(); };
+$("resetBtn").onclick=()=>{
+  if(!confirm("Reset all progress?")) return;
+  state.unlocked=1; state.scores=[null,null,null]; save(); renderHome();
+};
+
+load(); renderHome();
+</script>
+</body>
+</html>
